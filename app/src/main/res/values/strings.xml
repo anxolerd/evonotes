@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Evo Notes</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_save">Save</string>
+    <string name="placeholder_note">Type your note here</string>
+</resources>
