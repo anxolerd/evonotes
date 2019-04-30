@@ -1,6 +1,5 @@
 package io.github.anxolerd.evonotes.mvp.editnote
 
-import android.view.View
 import io.github.anxolerd.evonotes.dto.Note
 import io.github.anxolerd.evonotes.navigation.NavigationManager
 import io.github.anxolerd.evonotes.repository.NotesRepository
@@ -9,7 +8,7 @@ import org.threeten.bp.LocalDateTime
 class EditNotePresenterImpl(
     private val repository: NotesRepository,
     private val navigationManager: NavigationManager
-): EditNotePresenter {
+) : EditNotePresenter {
     override fun getNote(noteId: Long): Note {
         return checkNotNull(repository.getNote(noteId))
     }

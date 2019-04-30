@@ -3,7 +3,7 @@ package io.github.anxolerd.evonotes.navigation
 import androidx.fragment.app.FragmentManager
 import io.github.anxolerd.evonotes.EvoNotesApp
 
-public interface NavigationManager {
+interface NavigationManager {
     fun init(app: EvoNotesApp, fragmentManager: FragmentManager)
 
     fun showNotesList()

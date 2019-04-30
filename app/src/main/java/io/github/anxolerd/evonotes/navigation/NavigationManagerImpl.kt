@@ -27,7 +27,7 @@ class NavigationManagerImpl : NavigationManager {
 
     private fun popEveryFragment() {
         if (fm == null) return
-        val backStackCount = fm!!.getBackStackEntryCount()
+        val backStackCount = fm!!.backStackEntryCount
         for (index in 0 until backStackCount) {
 
             val backStackId = fm!!.getBackStackEntryAt(index).id

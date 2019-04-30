@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import io.github.anxolerd.evonotes.R
 import io.github.anxolerd.evonotes.dto.Note
+import kotlinx.coroutines.*
 
 
 class NotesListFragment : androidx.fragment.app.Fragment(), NotesListView, NotesAdapter.OnItemClickListener {
@@ -22,6 +23,10 @@ class NotesListFragment : androidx.fragment.app.Fragment(), NotesListView, Notes
     // Data
     private var notes: MutableList<Note> = ArrayList()
     private val notesAdapter = NotesAdapter(notes)
+
+    // Threading
+    val uiScope = CoroutineScope(Dispatchers.Main)
+    val bgDispatcher = Dispatchers.IO
 
     override fun setPresenter(presenter: NotesListPresenter) {
         this.presenter = checkNotNull(presenter)
@@ -54,12 +59,18 @@ class NotesListFragment : androidx.fragment.app.Fragment(), NotesListView, Notes
 
     override fun onResume() {
         super.onResume()
-        val notes = this.presenter!!.loadNotes()
-        this.notes.clear()
-        this.notes.addAll(notes)
-        this.notesAdapter.notifyDataSetChanged()
+        this.loadData()
     }
 
+    // TODO: move to presenter?
+    fun loadData() = uiScope.launch {
+        val notes = withContext(bgDispatcher) {
+            return@withContext this@NotesListFragment.presenter!!.loadNotes()
+        }
+        this@NotesListFragment.notes.clear()
+        this@NotesListFragment.notes.addAll(notes)
+        this@NotesListFragment.notesAdapter.notifyDataSetChanged()
+    }
 
     companion object {
         @JvmStatic

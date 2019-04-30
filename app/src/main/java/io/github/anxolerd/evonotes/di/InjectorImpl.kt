@@ -1,17 +1,22 @@
 package io.github.anxolerd.evonotes.di
 
+import android.content.Context
 import io.github.anxolerd.evonotes.mvp.editnote.EditNotePresenter
 import io.github.anxolerd.evonotes.mvp.editnote.EditNotePresenterImpl
 import io.github.anxolerd.evonotes.mvp.noteslist.NotesListPresenter
 import io.github.anxolerd.evonotes.mvp.noteslist.NotesListPresenterImpl
 import io.github.anxolerd.evonotes.navigation.NavigationManager
 import io.github.anxolerd.evonotes.navigation.NavigationManagerImpl
-import io.github.anxolerd.evonotes.repository.InMemoryNotesRepositoryImpl
 import io.github.anxolerd.evonotes.repository.NotesRepository
+import io.github.anxolerd.evonotes.repository.RoomNotesRepositoryImpl
 
-class InjectorImpl : Injector {
+
+class InjectorImpl(private val appContext: Context) : Injector {
     override fun getNotesRepository(): NotesRepository {
-        return notesRepository
+        if (notesRepository == null) {
+            notesRepository = RoomNotesRepositoryImpl(appContext)
+        }
+        return notesRepository!!
     }
 
     override fun getNavigationManager(): NavigationManager {
@@ -39,7 +44,7 @@ class InjectorImpl : Injector {
     }
 
     companion object {
-        private val notesRepository: NotesRepository by lazy { InMemoryNotesRepositoryImpl() }
+        private var notesRepository: NotesRepository? = null
         private val navigationManager: NavigationManager by lazy { NavigationManagerImpl() }
 
         // presenters

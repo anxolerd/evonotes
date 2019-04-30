@@ -5,8 +5,8 @@ import com.jakewharton.threetenabp.AndroidThreeTen
 import io.github.anxolerd.evonotes.di.Injector
 import io.github.anxolerd.evonotes.di.InjectorImpl
 
-public class EvoNotesApp : Application() {
-    public val di: Injector by lazy { InjectorImpl() }
+class EvoNotesApp : Application() {
+    val di: Injector by lazy { InjectorImpl(this.applicationContext) }
 
     override fun onCreate() {
         super.onCreate()

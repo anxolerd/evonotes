@@ -4,10 +4,10 @@ import io.github.anxolerd.evonotes.dto.Note
 import io.github.anxolerd.evonotes.navigation.NavigationManager
 import io.github.anxolerd.evonotes.repository.NotesRepository
 
-public class NotesListPresenterImpl(
+class NotesListPresenterImpl(
     val repository: NotesRepository,
     val navigationManager: NavigationManager
-): NotesListPresenter {
+) : NotesListPresenter {
 
     override fun loadNotes(): List<Note> {
         return repository.getNotes()
