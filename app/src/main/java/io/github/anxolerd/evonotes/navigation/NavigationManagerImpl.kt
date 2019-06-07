@@ -1,5 +1,6 @@
 package io.github.anxolerd.evonotes.navigation
 
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import io.github.anxolerd.evonotes.EvoNotesApp
@@ -11,6 +12,7 @@ class NavigationManagerImpl : NavigationManager {
 
     private var fm: FragmentManager? = null
     private var app: EvoNotesApp? = null
+    private var activity: AppCompatActivity? = null
 
     private fun open(fragment: Fragment) {
         if (fm == null) return
@@ -35,9 +37,10 @@ class NavigationManagerImpl : NavigationManager {
         }
     }
 
-    override fun init(app: EvoNotesApp, fragmentManager: FragmentManager) {
+    override fun init(app: EvoNotesApp, fragmentManager: FragmentManager, activity: AppCompatActivity) {
         this.app = app
         this.fm = fragmentManager
+        this.activity = activity
         fragmentManager.addOnBackStackChangedListener {
             if (fragmentManager.backStackEntryCount == 0) {
                 System.exit(0)  // TODO: find a better way to exit app
@@ -48,18 +51,21 @@ class NavigationManagerImpl : NavigationManager {
     override fun showNoteEditor() {
         val fragment = EditNoteFragment.newInstance()
         fragment.setPresenter(app!!.di.getEditNotePresenter())
+        activity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         open(fragment)
     }
 
     override fun showNoteEditor(noteId: Long) {
         val fragment = EditNoteFragment.newInstance(noteId)
         fragment.setPresenter(app!!.di.getEditNotePresenter())
+        activity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         open(fragment)
     }
 
     override fun showNotesList() {
         val fragment = NotesListFragment.newInstance()
         fragment.setPresenter(app!!.di.getNotesListPresenter())
+        activity?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         openAsRoot(fragment)
     }
 }

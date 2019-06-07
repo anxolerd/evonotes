@@ -59,6 +59,10 @@ class EditNoteFragment : androidx.fragment.app.Fragment(), EditNoteView {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
+            android.R.id.home -> {
+                this.presenter!!.navigateToNotesList()
+                true
+            }
             R.id.action_save -> {
                 saveNote(this.noteEditText?.text.toString())
                 true

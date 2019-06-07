@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         // Initialize navigation
         this.navigationManager = (this.application as EvoNotesApp).di.getNavigationManager()
 
-        this.navigationManager?.init(this.application as EvoNotesApp, this.supportFragmentManager)
+        this.navigationManager?.init(this.application as EvoNotesApp, this.supportFragmentManager, this)
         navigationManager?.showNotesList()
     }
 }
