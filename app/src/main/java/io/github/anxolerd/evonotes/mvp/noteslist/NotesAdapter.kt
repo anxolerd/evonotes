@@ -72,7 +72,7 @@ class NotesAdapter(private var notes: List<Note>) : RecyclerView.Adapter<NotesAd
 
     }
 
-    interface OnItemClickListener  {
+    interface OnItemClickListener {
         fun onItemClick(note: Note)
     }
 

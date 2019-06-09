@@ -5,10 +5,6 @@ import android.view.*
 import android.widget.EditText
 import io.github.anxolerd.evonotes.R
 import io.github.anxolerd.evonotes.dto.Note
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 private const val NOTE_ID = "note_id"
 private const val NEW_NOTE_ID = -1L
