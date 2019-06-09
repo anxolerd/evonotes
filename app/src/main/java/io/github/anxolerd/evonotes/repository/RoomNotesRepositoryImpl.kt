@@ -40,7 +40,7 @@ class Converter {
     }
 }
 
-@Database(version = 1, entities = [Note::class])
+@Database(version = 1, entities = [Note::class], exportSchema = false)
 @TypeConverters(Converter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getNotesDAO(): NotesDAO
