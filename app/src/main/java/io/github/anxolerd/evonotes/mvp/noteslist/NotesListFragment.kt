@@ -1,6 +1,9 @@
 package io.github.anxolerd.evonotes.mvp.noteslist
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,10 +12,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import io.github.anxolerd.evonotes.R
 import io.github.anxolerd.evonotes.dto.Note
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
-class NotesListFragment : androidx.fragment.app.Fragment(), NotesListView, NotesAdapter.OnItemClickListener {
+class NotesListFragment : androidx.fragment.app.Fragment(),
+    NotesListView,
+    NotesAdapter.OnItemClickListener,
+    NotesAdapter.OnItemLongClickListener {
+
     // DI
     private var presenter: NotesListPresenter? = null
 
@@ -43,6 +53,7 @@ class NotesListFragment : androidx.fragment.app.Fragment(), NotesListView, Notes
         this.notesRecyclerView?.layoutManager = LinearLayoutManager(inflater.context)
         this.notesRecyclerView?.adapter = notesAdapter
         this.notesAdapter.addOnItemClickListener(this)
+        this.notesAdapter.addOnItemLongClickListener(this)
 
         this.addNoteButton = view.findViewById(R.id.add_note_button)
         this.addNoteButton?.setOnClickListener {
@@ -56,10 +67,34 @@ class NotesListFragment : androidx.fragment.app.Fragment(), NotesListView, Notes
         this.presenter!!.navigateNoteEditor(note.id)
     }
 
+    override fun onItemLongClick(note: Note): Boolean {
+        val dialogBuilder = AlertDialog.Builder(activity)
+        dialogBuilder.setTitle(getString(io.github.anxolerd.evonotes.R.string.delete_dialog_title))
+        dialogBuilder.setPositiveButton(
+            getString(io.github.anxolerd.evonotes.R.string.delete),
+            { dialog, _ ->
+                this.deleteNote(note)
+                this.loadData()
+                dialog.dismiss()
+            }
+        )
+        dialogBuilder.setNegativeButton(android.R.string.cancel, { dialog, _ ->
+            dialog.dismiss()
+        })
+        dialogBuilder.create().show()
+        return true
+    }
+
 
     override fun onResume() {
         super.onResume()
         this.loadData()
+    }
+
+    fun deleteNote(note: Note) = uiScope.launch {
+        withContext(bgDispatcher) {
+            return@withContext this@NotesListFragment.presenter!!.deleteNote(note)
+        }
     }
 
     // TODO: move to presenter?

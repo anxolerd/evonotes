@@ -20,6 +20,9 @@ interface NotesDAO {
 
     @Update
     fun editNote(note: Note)
+
+    @Delete
+    fun deleteNote(note: Note)
 }
 
 
@@ -68,4 +71,10 @@ class RoomNotesRepositoryImpl(context: Context) : NotesRepository {
         db.getNotesDAO().editNote(note)
         return note
     }
+
+    override fun deleteNote(note: Note) {
+        db.getNotesDAO().deleteNote(note);
+    }
+
+
 }

@@ -6,4 +6,5 @@ import io.github.anxolerd.evonotes.mvp.BasePresenter
 interface NotesListPresenter : BasePresenter {
     fun loadNotes(): List<Note>
     fun navigateNoteEditor(noteId: Long? = null)
+    fun deleteNote(note: Note)
 }

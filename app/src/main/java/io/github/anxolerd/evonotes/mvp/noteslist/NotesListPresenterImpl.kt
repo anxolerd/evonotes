@@ -8,7 +8,6 @@ class NotesListPresenterImpl(
     val repository: NotesRepository,
     val navigationManager: NavigationManager
 ) : NotesListPresenter {
-
     override fun loadNotes(): List<Note> {
         return repository.getNotes()
     }
@@ -20,4 +19,9 @@ class NotesListPresenterImpl(
             navigationManager.showNoteEditor(noteId)
         }
     }
+
+    override fun deleteNote(note: Note) {
+        return repository.deleteNote(note)
+    }
+
 }

@@ -6,4 +6,6 @@
     <string name="action_settings">Settings</string>
     <string name="action_save">Save</string>
     <string name="placeholder_note">Type your note here</string>
+    <string name="delete">Delete</string>
+    <string name="delete_dialog_title">Delete note?</string>
 </resources>

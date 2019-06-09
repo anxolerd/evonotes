@@ -7,4 +7,5 @@ interface NotesRepository {
     fun getNote(id: Long): Note?
     fun saveNote(note: Note): Note
     fun editNote(note: Note): Note
+    fun deleteNote(note: Note)
 }
