@@ -43,7 +43,7 @@ class NavigationManagerImpl : NavigationManager {
         this.activity = activity
         fragmentManager.addOnBackStackChangedListener {
             if (fragmentManager.backStackEntryCount == 0) {
-                System.exit(0)  // TODO: find a better way to exit app
+                activity.finish()
             }
         }
     }
