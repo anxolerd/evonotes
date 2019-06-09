@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.EditText
 import io.github.anxolerd.evonotes.R
+import io.github.anxolerd.evonotes.dto.Note
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,11 +19,6 @@ class EditNoteFragment : androidx.fragment.app.Fragment(), EditNoteView {
 
     // UI
     private var noteEditText: EditText? = null
-
-    // Threading
-    val uiScope = CoroutineScope(Dispatchers.Main)
-    val bgDispatcher = Dispatchers.IO
-
 
     override fun setPresenter(presenter: EditNotePresenter) {
         this.presenter = checkNotNull(presenter)
@@ -64,7 +60,10 @@ class EditNoteFragment : androidx.fragment.app.Fragment(), EditNoteView {
                 true
             }
             R.id.action_save -> {
-                saveNote(this.noteEditText?.text.toString())
+                this.presenter?.saveNote(
+                    this.noteId,
+                    this.noteEditText?.text.toString()
+                )
                 true
             }
             else -> false
@@ -74,26 +73,12 @@ class EditNoteFragment : androidx.fragment.app.Fragment(), EditNoteView {
     override fun onResume() {
         super.onResume()
         this.noteId?.let {
-            loadNote()
+            this.presenter?.getNote(it)
         }
     }
 
-    // TODO: move to presenter?
-    fun loadNote() = uiScope.launch {
-        val noteText = withContext(bgDispatcher) {
-            return@withContext this@EditNoteFragment.presenter!!
-                .getNote(this@EditNoteFragment.noteId!!)
-                .content
-        }
-        this@EditNoteFragment.noteEditText?.setText(noteText)
-    }
-
-    // TODO: move to presenter?
-    fun saveNote(text: String) = uiScope.launch {
-        withContext(bgDispatcher) {
-            this@EditNoteFragment.presenter!!.saveNote(this@EditNoteFragment.noteId, text)
-        }
-        this@EditNoteFragment.presenter!!.navigateToNotesList()
+    override fun showNote(note: Note) {
+        this.noteEditText?.setText(note.content)
     }
 
     companion object {

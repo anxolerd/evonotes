@@ -50,21 +50,30 @@ class NavigationManagerImpl : NavigationManager {
 
     override fun showNoteEditor() {
         val fragment = EditNoteFragment.newInstance()
-        fragment.setPresenter(app!!.di.getEditNotePresenter())
+        val presenter = app!!.di.getEditNotePresenter()
+        presenter.setView(fragment)
+        fragment.setPresenter(presenter)
+
         activity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         open(fragment)
     }
 
     override fun showNoteEditor(noteId: Long) {
         val fragment = EditNoteFragment.newInstance(noteId)
-        fragment.setPresenter(app!!.di.getEditNotePresenter())
+        val presenter = app!!.di.getEditNotePresenter()
+        presenter.setView(fragment)
+        fragment.setPresenter(presenter)
+
         activity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         open(fragment)
     }
 
     override fun showNotesList() {
         val fragment = NotesListFragment.newInstance()
-        fragment.setPresenter(app!!.di.getNotesListPresenter())
+        val presenter = app!!.di.getNotesListPresenter()
+        presenter.setView(fragment)
+        fragment.setPresenter(presenter)
+
         activity?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         openAsRoot(fragment)
     }

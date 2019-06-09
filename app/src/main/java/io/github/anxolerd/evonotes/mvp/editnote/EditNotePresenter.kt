@@ -1,12 +1,10 @@
 package io.github.anxolerd.evonotes.mvp.editnote
 
-import io.github.anxolerd.evonotes.dto.Note
 import io.github.anxolerd.evonotes.mvp.BasePresenter
+import kotlinx.coroutines.Job
 
-interface EditNotePresenter : BasePresenter {
-    fun getNote(noteId: Long): Note
-
-    fun saveNote(noteId: Long?, content: String): Note
-
+interface EditNotePresenter : BasePresenter<EditNotePresenter, EditNoteView> {
+    fun getNote(noteId: Long): Job
+    fun saveNote(noteId: Long?, content: String): Job
     fun navigateToNotesList()
 }

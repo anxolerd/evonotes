@@ -1,21 +1,18 @@
 package io.github.anxolerd.evonotes.mvp.noteslist
 
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import io.github.anxolerd.evonotes.R
 import io.github.anxolerd.evonotes.dto.Note
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 class NotesListFragment : androidx.fragment.app.Fragment(),
@@ -29,14 +26,11 @@ class NotesListFragment : androidx.fragment.app.Fragment(),
     // UI
     private var addNoteButton: FloatingActionButton? = null
     private var notesRecyclerView: RecyclerView? = null
+    private var notesStatusText: TextView? = null
 
     // Data
     private var notes: MutableList<Note> = ArrayList()
     private val notesAdapter = NotesAdapter(notes)
-
-    // Threading
-    val uiScope = CoroutineScope(Dispatchers.Main)
-    val bgDispatcher = Dispatchers.IO
 
     override fun setPresenter(presenter: NotesListPresenter) {
         this.presenter = checkNotNull(presenter)
@@ -52,6 +46,12 @@ class NotesListFragment : androidx.fragment.app.Fragment(),
         this.notesRecyclerView = view.findViewById(R.id.notes_recycler_view)
         this.notesRecyclerView?.layoutManager = LinearLayoutManager(inflater.context)
         this.notesRecyclerView?.adapter = notesAdapter
+        this.notesRecyclerView?.addItemDecoration(
+            DividerItemDecoration(
+                this.notesRecyclerView?.context,
+                DividerItemDecoration.VERTICAL
+            )
+        )
         this.notesAdapter.addOnItemClickListener(this)
         this.notesAdapter.addOnItemLongClickListener(this)
 
@@ -59,6 +59,8 @@ class NotesListFragment : androidx.fragment.app.Fragment(),
         this.addNoteButton?.setOnClickListener {
             this.presenter!!.navigateNoteEditor()
         }
+
+        this.notesStatusText = view.findViewById(R.id.notes_status_text)
 
         return view
     }
@@ -71,16 +73,14 @@ class NotesListFragment : androidx.fragment.app.Fragment(),
         val dialogBuilder = AlertDialog.Builder(activity)
         dialogBuilder.setTitle(getString(io.github.anxolerd.evonotes.R.string.delete_dialog_title))
         dialogBuilder.setPositiveButton(
-            getString(io.github.anxolerd.evonotes.R.string.delete),
-            { dialog, _ ->
-                this.deleteNote(note)
-                this.loadData()
-                dialog.dismiss()
-            }
-        )
-        dialogBuilder.setNegativeButton(android.R.string.cancel, { dialog, _ ->
+            getString(io.github.anxolerd.evonotes.R.string.delete)
+        ) { dialog, _ ->
+            this.presenter?.deleteNote(note)
             dialog.dismiss()
-        })
+        }
+        dialogBuilder.setNegativeButton(android.R.string.cancel) { dialog, _ ->
+            dialog.dismiss()
+        }
         dialogBuilder.create().show()
         return true
     }
@@ -88,23 +88,32 @@ class NotesListFragment : androidx.fragment.app.Fragment(),
 
     override fun onResume() {
         super.onResume()
-        this.loadData()
+        this.presenter?.loadNotes()
     }
 
-    fun deleteNote(note: Note) = uiScope.launch {
-        withContext(bgDispatcher) {
-            return@withContext this@NotesListFragment.presenter!!.deleteNote(note)
-        }
+    override fun showEmptyView() {
+        this.notes.clear()
+        this.notesAdapter.notifyDataSetChanged()
+        this.notesRecyclerView?.visibility = View.GONE
+        this.notesStatusText?.text = getString(R.string.empty_notes)
+        this.notesStatusText?.visibility = View.VISIBLE
+        this.addNoteButton?.isEnabled = true
     }
 
-    // TODO: move to presenter?
-    fun loadData() = uiScope.launch {
-        val notes = withContext(bgDispatcher) {
-            return@withContext this@NotesListFragment.presenter!!.loadNotes()
-        }
-        this@NotesListFragment.notes.clear()
-        this@NotesListFragment.notes.addAll(notes)
-        this@NotesListFragment.notesAdapter.notifyDataSetChanged()
+    override fun showLoading() {
+        this.notesRecyclerView?.visibility = View.GONE
+        this.notesStatusText?.text = getString(R.string.loading)
+        this.notesStatusText?.visibility = View.VISIBLE
+        this.addNoteButton?.isEnabled = false
+    }
+
+    override fun showNotes(notes: List<Note>) {
+        this.notes.clear()
+        this.notes.addAll(notes)
+        this.notesAdapter.notifyDataSetChanged()
+        this.notesStatusText?.visibility = View.GONE
+        this.notesRecyclerView?.visibility = View.VISIBLE
+        this.addNoteButton?.isEnabled = true
     }
 
     companion object {

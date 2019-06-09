@@ -8,4 +8,6 @@
     <string name="placeholder_note">Type your note here</string>
     <string name="delete">Delete</string>
     <string name="delete_dialog_title">Delete note?</string>
+    <string name="loading">Loading ...</string>
+    <string name="empty_notes">No notes found</string>
 </resources>
